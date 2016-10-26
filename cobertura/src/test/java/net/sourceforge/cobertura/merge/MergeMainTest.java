@@ -94,6 +94,32 @@ public class MergeMainTest extends TestCase {
 		assertNull(merged.getClassData("test.Third"));
 	}
 
+	public void testDestinationFileNotOverwritten() throws IOException {
+		// Create some coverage data
+		greenProject.addClassData(firstClass);
+		redProject.addClassData(secondClass);
+		redProject.addClassData(seventhClass);
+
+		// Generate filenames for serialized data
+		File dataFile = createTempSerFile();
+		File greenFile = dataFile;
+		File redFile = dataFile;
+
+		// Save coverage data for created data
+		CoverageDataFileHandler.saveCoverageData(greenProject, greenFile);
+		CoverageDataFileHandler.saveCoverageData(redProject, redFile);
+
+		// Read merged data
+		ProjectData merged = CoverageDataFileHandler.loadCoverageData(dataFile);
+
+		// Check if everything is ok
+		assertEquals(3, merged.getNumberOfClasses());
+		assertNotNull(merged.getClassData("test.First"));
+		assertNotNull(merged.getClassData("test.Second"));
+		assertNotNull(merged.getClassData("Seventh"));
+		assertNull(merged.getClassData("test.Third"));
+	}
+
 	public void testExistingDestinationFile() throws IOException {
 		// Create some coverage data
 		greenProject.addClassData(firstClass);
