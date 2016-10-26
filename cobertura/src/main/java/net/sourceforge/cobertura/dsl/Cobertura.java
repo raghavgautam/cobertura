@@ -100,8 +100,11 @@ public class Cobertura {
 	 * @return this Cobertura instance
 	 */
 	public Cobertura merge() {
+		if (projectData == null) {
+			projectData = new ProjectData(); //don't load coverage data
+		}
 		mergeProjectDataFilesTask.mergeProjectDataFiles(args,
-				getProjectDataInstance());
+				projectData);
 		return this;
 	}
 
