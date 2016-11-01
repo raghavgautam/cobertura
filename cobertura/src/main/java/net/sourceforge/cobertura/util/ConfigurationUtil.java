@@ -21,6 +21,8 @@
 
 package net.sourceforge.cobertura.util;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -47,6 +49,18 @@ public class ConfigurationUtil {
 
 	public void init() {
 		props = new Properties();
+		String configFileName = "/etc" + RESOURCE;
+		InputStream fileInputStream = null;
+		try {
+			fileInputStream = new FileInputStream(configFileName);
+			props.load(fileInputStream);
+		} catch (FileNotFoundException e) {
+			DEBUG("Unable to find configuration file: " + configFileName + " exception: " + e);
+		} catch (IOException e) {
+			DEBUG("Unable to read configuration file: " + configFileName + " exception: " + e);
+		} finally {
+			IOUtil.closeInputStream(fileInputStream);
+		}
 
 		URL url = this.getClass().getResource(RESOURCE);
 		if (url == null) {
