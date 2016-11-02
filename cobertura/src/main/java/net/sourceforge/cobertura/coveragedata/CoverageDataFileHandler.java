@@ -170,7 +170,7 @@ public abstract class CoverageDataFileHandler {
      * even if there are multiple classloaders.  I assume that is because
      * the String class is loaded by the JVM's root classloader.
      */
-		synchronized (dataFile.getPath().intern()) {
+		synchronized (dataFile.getAbsolutePath().intern()) {
 			FileLocker fileLocker = new FileLocker(dataFile);
 
 			try {
