@@ -120,6 +120,44 @@ public class MergeMainTest extends TestCase {
 		assertNull(merged.getClassData("test.Third"));
 	}
 
+	public void testNonExistingFile() throws IOException {
+		// Create some coverage data
+		greenProject.addClassData(firstClass);
+		redProject.addClassData(secondClass);
+		redProject.addClassData(seventhClass);
+
+		// Generate filenames for serialized data
+		File greenFile = createTempSerFile();
+		File nonFile = new File("/tmp/non-existing.ser");
+		File redFile = createTempSerFile();
+		File dataFile = createTempSerFile();
+
+		// Save coverage data for created data
+		CoverageDataFileHandler.saveCoverageData(greenProject, greenFile);
+		CoverageDataFileHandler.saveCoverageData(redProject, redFile);
+
+		// Run merge task
+		String[] args = {"--datafile", dataFile.getAbsolutePath(),
+				greenFile.getAbsolutePath(), nonFile.getAbsolutePath(), redFile.getAbsolutePath()};
+
+		System.out.println(String.format(
+				"### Will merge dataFiles: %s, %s, %s, %s", dataFile
+						.getAbsolutePath(), greenFile.getAbsolutePath(), nonFile.getAbsolutePath(),
+				redFile.getAbsolutePath()));
+
+		MergeMain.main(args);
+
+		// Read merged data
+		ProjectData merged = CoverageDataFileHandler.loadCoverageData(dataFile);
+
+		// Check if everything is ok
+		assertEquals(3, merged.getNumberOfClasses());
+		assertNotNull(merged.getClassData("test.First"));
+		assertNotNull(merged.getClassData("test.Second"));
+		assertNotNull(merged.getClassData("Seventh"));
+		assertNull(merged.getClassData("test.Third"));
+	}
+
 	public void testExistingDestinationFile() throws IOException {
 		// Create some coverage data
 		greenProject.addClassData(firstClass);
