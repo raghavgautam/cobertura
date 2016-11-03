@@ -27,10 +27,9 @@
 package net.sourceforge.cobertura.util;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.nio.channels.FileLock;
 
 /**
  * This class controls access to any file so that multiple JVMs will
@@ -49,30 +48,18 @@ import java.lang.reflect.Method;
  */
 public class FileLocker {
 
-	/**
-	 * An object of type FileLock, created using reflection.
-	 */
-	private Object lock = null;
-
-	/**
-	 * An object of type FileChannel, created using reflection.
-	 */
-	private Object lockChannel = null;
+	private FileLock lock = null;
 
 	/**
 	 * A file called "filename.lock" that resides in the same directory
 	 * as "filename"
 	 */
 	private File lockFile;
+	private RandomAccessFile randomAccessFile;
 
 	public FileLocker(File file) {
 		String lockFileName = file.getName() + ".lock";
-		File parent = file.getParentFile();
-		if (parent == null) {
-			lockFile = new File(lockFileName);
-		} else {
-			lockFile = new File(parent, lockFileName);
-		}
+		lockFile = new File(lockFileName);
 	}
 
 	/**
@@ -80,68 +67,22 @@ public class FileLocker {
 	 */
 	public boolean lock() {
 		String useNioProperty = System.getProperty("cobertura.use.java.nio");
-		if (System.getProperty("java.version").startsWith("1.3")
-				|| ((useNioProperty != null) && useNioProperty
-						.equalsIgnoreCase("false"))) {
+		if (useNioProperty != null && useNioProperty.equalsIgnoreCase("false")) {
 			return true;
 		}
 
 		try {
-			Class aClass = Class.forName("java.io.RandomAccessFile");
-			Method method = aClass.getDeclaredMethod("getChannel",
-					(Class[]) null);
-			lockChannel = method.invoke(new RandomAccessFile(lockFile, "rw"),
-					(Object[]) null);
-		} catch (FileNotFoundException e) {
-			System.err.println("Unable to get lock channel for "
-					+ lockFile.getAbsolutePath() + ": "
-					+ e.getLocalizedMessage());
-			return false;
-		} catch (InvocationTargetException e) {
-			System.err.println("Unable to get lock channel for "
-					+ lockFile.getAbsolutePath() + ": "
-					+ e.getLocalizedMessage());
+			randomAccessFile = new RandomAccessFile(lockFile, "rw");
+			lock = randomAccessFile.getChannel().lock();
+		} catch (IOException e) {
+			System.err.println("Unable to get lock channel for " + lockFile.getAbsolutePath() + ": " + e.getLocalizedMessage());
+			e.printStackTrace();
 			return false;
 		} catch (Throwable t) {
-			System.err
-					.println("Unable to execute RandomAccessFile.getChannel() using reflection: "
-							+ t.getLocalizedMessage());
+			System.err.println("Unable to acquire lock: " + t.getLocalizedMessage());
 			t.printStackTrace();
-		}
-
-		try {
-			Class aClass = Class.forName("java.nio.channels.FileChannel");
-			Method method = aClass.getDeclaredMethod("lock", (Class[]) null);
-			lock = method.invoke(lockChannel, (Object[]) null);
-		} catch (InvocationTargetException e) {
-			System.err.println("---------------------------------------");
-			e.printStackTrace(System.err);
-			System.err.println("---------------------------------------");
-			System.err.println("Unable to get lock on "
-					+ lockFile.getAbsolutePath() + ": "
-					+ e.getLocalizedMessage());
-			System.err
-					.println("This is known to happen on Linux kernel 2.6.20.");
-			System.err
-					.println("Make sure cobertura.jar is in the root classpath of the jvm ");
-			System.err
-					.println("process running the instrumented code.  If the instrumented code ");
-			System.err
-					.println("is running in a web server, this means cobertura.jar should be in ");
-			System.err.println("the web server's lib directory.");
-			System.err
-					.println("Don't put multiple copies of cobertura.jar in different WEB-INF/lib directories.");
-			System.err
-					.println("Only one classloader should load cobertura.  It should be the root classloader.");
-			System.err.println("---------------------------------------");
 			return false;
-		} catch (Throwable t) {
-			System.err
-					.println("Unable to execute FileChannel.lock() using reflection: "
-							+ t.getLocalizedMessage());
-			t.printStackTrace();
 		}
-
 		return true;
 	}
 
@@ -149,48 +90,22 @@ public class FileLocker {
 	 * Releases the lock on the file.
 	 */
 	public void release() {
-		if (lock != null)
-			lock = releaseFileLock(lock);
-
-		if (lockChannel != null)
-			lockChannel = closeChannel(lockChannel);
-		if (!lockFile.delete()) {
-			System.err.println("lock file could not be deleted");
-		}
-	}
-
-	private static Object releaseFileLock(Object lock) {
 		try {
-			Class aClass = Class.forName("java.nio.channels.FileLock");
-			Method method = aClass.getDeclaredMethod("isValid", (Class[]) null);
-			if (((Boolean) method.invoke(lock, (Object[]) null)).booleanValue()) {
-				method = aClass.getDeclaredMethod("release", (Class[]) null);
-				method.invoke(lock, (Object[]) null);
+			if (lock.isValid()) {
+				lock.release();
 				lock = null;
 			}
 		} catch (Throwable t) {
-			System.err.println("Unable to release locked file: "
-					+ t.getLocalizedMessage());
+			System.err.println("Unable to release locked file: " + t.getLocalizedMessage());
 		}
-		return lock;
-	}
-
-	private static Object closeChannel(Object channel) {
 		try {
-			Class aClass = Class
-					.forName("java.nio.channels.spi.AbstractInterruptibleChannel");
-			Method method = aClass.getDeclaredMethod("isOpen", (Class[]) null);
-			if (((Boolean) method.invoke(channel, (Object[]) null))
-					.booleanValue()) {
-				method = aClass.getDeclaredMethod("close", (Class[]) null);
-				method.invoke(channel, (Object[]) null);
-				channel = null;
-			}
-		} catch (Throwable t) {
-			System.err.println("Unable to close file channel: "
-					+ t.getLocalizedMessage());
+			randomAccessFile.close();
+		} catch (Exception e) {
+			System.err.println("Unable to close stream: " + e.getLocalizedMessage());
+			e.printStackTrace();
 		}
-		return channel;
+		if (!lockFile.delete()) {
+			System.err.println("Unable to delete lockFile " + lockFile);
+		}
 	}
-
 }

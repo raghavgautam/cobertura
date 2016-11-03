@@ -198,7 +198,7 @@ public abstract class CoverageDataFileHandler {
 
 		// Read projectData from the serialized file.
 		if (dataFile.isFile()) {
-			projectData = CoverageDataFileHandler.loadCoverageData(dataFile);
+			projectData = loadCoverageData(dataFile);
 		}
 
 		if (projectData == null) {
