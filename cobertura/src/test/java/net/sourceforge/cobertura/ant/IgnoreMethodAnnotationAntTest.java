@@ -6,9 +6,9 @@ import java.io.File;
 
 import net.sourceforge.cobertura.test.util.TestUtils;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
+@org.junit.Ignore
 public class IgnoreMethodAnnotationAntTest extends AbstractCoberturaAntTestCase {
 	@Before
 	public void setUp() throws Exception {
