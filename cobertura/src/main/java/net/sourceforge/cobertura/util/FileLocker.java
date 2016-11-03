@@ -58,7 +58,7 @@ public class FileLocker {
 	private RandomAccessFile randomAccessFile;
 
 	public FileLocker(File file) {
-		String lockFileName = file.getName() + ".lock";
+		String lockFileName = file.getAbsolutePath() + ".lock";
 		lockFile = new File(lockFileName);
 	}
 
