@@ -73,6 +73,9 @@ public class FileLocker {
 
 		try {
 			randomAccessFile = new RandomAccessFile(lockFile, "rw");
+            lockFile.setExecutable(true, false);
+            lockFile.setWritable(true, false);
+            lockFile.setReadable(true, false);
 			lock = randomAccessFile.getChannel().lock();
 		} catch (IOException e) {
 			System.err.println("Unable to get lock channel for " + lockFile.getAbsolutePath() + ": " + e.getLocalizedMessage());
