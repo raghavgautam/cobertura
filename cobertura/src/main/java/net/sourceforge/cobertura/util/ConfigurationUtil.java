@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.util.Properties;
 
@@ -101,8 +102,8 @@ public class ConfigurationUtil {
 	}
 
 	public String getDatafile() {
-		return getProperty("net.sourceforge.cobertura.datafile",
-				"cobertura.ser");
+		String dateFileName = getProperty("net.sourceforge.cobertura.datafile", "cobertura.ser");
+		return dateFileName.replaceFirst("####", ManagementFactory.getRuntimeMXBean().getName());
 	}
 
 	/**
