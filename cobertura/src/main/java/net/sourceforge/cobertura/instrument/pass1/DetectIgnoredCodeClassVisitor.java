@@ -29,7 +29,6 @@ import net.sourceforge.cobertura.instrument.AbstractFindTouchPointsClassInstrume
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.util.CheckClassAdapter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -68,7 +67,7 @@ public class DetectIgnoredCodeClassVisitor extends ClassVisitor {
 
 	public DetectIgnoredCodeClassVisitor(ClassVisitor cv,
 			boolean ignoreTrivial, Set<String> ignoreAnnotations) {
-		super(Opcodes.ASM4, new CheckClassAdapter(cv, false));
+		super(Opcodes.ASM4, cv);
 		this.ignoreTrivial = ignoreTrivial;
 		this.ignoreAnnotations = ignoreAnnotations;
 	}
