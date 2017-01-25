@@ -1,4 +1,5 @@
 # COBERTURA
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8ad6ed644cf94e1fb99be2de9f2a0623)](https://www.codacy.com/app/raghavgautam/cobertura?utm_source=github.com&utm_medium=referral&utm_content=raghavgautam/cobertura&utm_campaign=badger)
 [![Build Status](http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png)](https://cobertura.ci.cloudbees.com/job/Cobertura/)
 [![Build Status](http://www.cloudbees.com/sites/default/files/Button-Powered-by-CB.png)](http://www.cloudbees.com/)
 
