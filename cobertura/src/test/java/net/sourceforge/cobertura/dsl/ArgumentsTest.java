@@ -86,7 +86,7 @@ public class ArgumentsTest {
 				CLASS_BRANCH_THRESHOLD, PACKAGE_LINE_THRESHOLD,
 				PACKAGE_BRANCH_THRESHOLD, TOTAL_LINE_THRESHOLD,
 				TOTAL_BRANCH_THRESHOLD, filesToInstrument, filesToMerge,
-				ignoreMethodAnnotations, ignoreClassAnnotations, SOURCES);
+				ignoreMethodAnnotations, ignoreClassAnnotations, SOURCES, null);
 	}
 
 	@Test

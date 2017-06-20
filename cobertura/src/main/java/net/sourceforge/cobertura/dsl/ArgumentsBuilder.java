@@ -47,6 +47,7 @@ public class ArgumentsBuilder {
 	private Arguments arguments;
 
 	private String baseDirectory;
+	private String packageName;
 	private File dataFile;
 	private File destinationDirectory;
 	private File commandsFile;
@@ -219,6 +220,11 @@ public class ArgumentsBuilder {
 		return this;
 	}
 
+	public ArgumentsBuilder setPackageName(String packageName) {
+		this.packageName = packageName;
+		return this;
+	}
+
 	public ArgumentsBuilder addFileToInstrument(String file) {
 		String baseDir = getBaseDirectory();
 		if ( baseDir != null ) {
@@ -265,7 +271,7 @@ public class ArgumentsBuilder {
 				classLineThreshold, classBranchThreshold, packageLineThreshold,
 				packageBranchThreshold, totalLineThreshold,
 				totalBranchThreshold, filesToInstrument, filesToMerge,
-				ignoreMethodAnnotations, ignoreClassAnnotations, sources);
+				ignoreMethodAnnotations, ignoreClassAnnotations, sources, packageName);
 	}
 
 	private double inRange(double coverageRate) {

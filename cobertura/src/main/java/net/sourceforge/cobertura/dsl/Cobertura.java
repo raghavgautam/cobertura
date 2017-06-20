@@ -9,6 +9,7 @@ import net.sourceforge.cobertura.reporting.ComplexityCalculator;
 import net.sourceforge.cobertura.reporting.CompositeReport;
 import net.sourceforge.cobertura.reporting.NativeReport;
 import net.sourceforge.cobertura.reporting.Report;
+import net.sourceforge.cobertura.segregate.SegregateProjectDataFilesTask;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -105,6 +106,16 @@ public class Cobertura {
 		}
 		mergeProjectDataFilesTask.mergeProjectDataFiles(args,
 				projectData);
+		return this;
+	}
+
+	/**
+	 * Segregates specified project data files into multiple files.
+	 * @return this Cobertura instance
+	 */
+	public Cobertura segregate() {
+		final SegregateProjectDataFilesTask segregateProjectDataFilesTask = new SegregateProjectDataFilesTask();
+		segregateProjectDataFilesTask.segregateProjectDataFiles(args, getProjectDataInstance());
 		return this;
 	}
 

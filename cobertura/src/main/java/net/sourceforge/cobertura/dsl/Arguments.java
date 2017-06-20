@@ -38,6 +38,7 @@ public class Arguments {
 	private File destinationDirectory;
 	private File commandsFile;
 	private FileFinder sources;
+	private final String packageName;
 
 	private Collection ignoreRegexes;
 	private Collection<Pattern> ignoreBranchesRegexes;
@@ -64,20 +65,20 @@ public class Arguments {
 	private Set<String> ignoreClassAnnotations;
 
 	Arguments(String baseDirectory, File dataFile, File destinationDirectory,
-			File commandsFile, Collection ignoreRegexes,
-			Collection<Pattern> ignoreBranchesRegexes,
-			Collection<Pattern> classPatternIncludeClassesRegexes,
-			Collection<Pattern> classPatternExcludeClassesRegexes,
-			boolean calculateMethodComplexity,
-			boolean failOnError, boolean ignoreTrivial,
-			boolean threadsafeRigorous, String encoding,
-			Set<CoverageThreshold> minimumCoverageThresholds,
-			double classLineThreshold, double classBranchThreshold,
-			double packageLineThreshold, double packageBranchThreshold,
-			double totalLineThreshold, double totalBranchThreshold,
-			Set<CoberturaFile> filesToInstrument, Set<File> filesToMerge,
-			Set<String> ignoreMethodAnnotations,
-			Set<String> ignoreClassAnnotations, FileFinder sources) {
+			  File commandsFile, Collection ignoreRegexes,
+			  Collection<Pattern> ignoreBranchesRegexes,
+			  Collection<Pattern> classPatternIncludeClassesRegexes,
+			  Collection<Pattern> classPatternExcludeClassesRegexes,
+			  boolean calculateMethodComplexity,
+			  boolean failOnError, boolean ignoreTrivial,
+			  boolean threadsafeRigorous, String encoding,
+			  Set<CoverageThreshold> minimumCoverageThresholds,
+			  double classLineThreshold, double classBranchThreshold,
+			  double packageLineThreshold, double packageBranchThreshold,
+			  double totalLineThreshold, double totalBranchThreshold,
+			  Set<CoberturaFile> filesToInstrument, Set<File> filesToMerge,
+			  Set<String> ignoreMethodAnnotations,
+			  Set<String> ignoreClassAnnotations, FileFinder sources, String packageName) {
 		this.baseDirectory = baseDirectory;
 		this.dataFile = dataFile;
 		this.destinationDirectory = destinationDirectory;
@@ -109,6 +110,7 @@ public class Arguments {
 				.unmodifiableSet(ignoreMethodAnnotations);
 		this.ignoreClassAnnotations = Collections
 				.unmodifiableSet(ignoreClassAnnotations);
+		this.packageName = packageName;
 	}
 
 	public String getBaseDirectory() {
@@ -209,5 +211,9 @@ public class Arguments {
 
 	public Set<String> getIgnoreClassAnnotations() {
 		return ignoreClassAnnotations;
+	}
+
+	public String getPackageName() {
+		return packageName;
 	}
 }
