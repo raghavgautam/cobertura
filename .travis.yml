@@ -12,6 +12,12 @@ deploy:
   provider: releases
   api_key:
     secure: MMWNdp2ijYQ3BdnMbGWAkjjyCiLE8SJN4FDs0+lJ0oCvmvDZg8o4Isg0pkLrXNv/9z24jVGWg2kyVxWvlrH8Tgw1rVLDx0w5SRV0mWSVYK/2Mf+4eEACnA/VxsxbYnVC3WOhGcOW+jXDUff7U4PcN75sfHb6NQvtXtcjsSYuUMmizy7+IGRmuly8JBzM95tK9oewyirlNCxACvAfz/u/7AMGHGkD9dQ8udKNcx6zuzPN1e8jQUWZ2VzGN+BgVuIZbjcILa71zvw20UGy7q+FZUGr0wIc3qz3mIcqLkp+UdVuTD8aWmMbul2pz7rqHTzuwftPRuf2k3R4JXve2zHrn0LghrD19KEsolRUnwh/ZZsdHpWhQadOpmaGPwnTTIWPz9ffk48p0etlH+IvBfLYoJvWAd5W0RHbKMHBM4to8QOpB+P73mxWM7ywjZVIJw3Nht4hijl3BdyILly8c9UI1UgvuOvZzEL+JTPx/BySIyDhbq8kPIDCwrzc0umCH6tmYXM8+PuLe9SRWDzCGAX/EpbFQ/QANqTTOXb9NNABOcAlwbRRSKmWjFKpiZG/JHDYHVTI3bUUrb7rmfmBCZ1LS2F5al7HUT19QJGUixRldtmaiNIccKvmN9aF4fT8ggYrpFaR1vPxXW8zIBJh3SAUfYDuDBqguHB2oluD1VAsVy4=
-  file: cobertura/target/cobertura*bin.tar.gz
+  file_glob: true
+  file:
+  - cobertura/target/cobertura*bin.tar.gz
+  - cobertura/target/cobertura*bin.tar.bz2
+  - cobertura/target/cobertura*bin.zip
+  skip_cleanup: true
   on:
-    repo: raghavgautam/cobertura
+    jdk: oraclejdk7
+    branch: cobertura-2.1.1-fix
